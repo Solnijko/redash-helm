@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: redis
+spec:
+  ports:
+  - port: {{ .Values.redis.port }}
+    name: redis
+  type: {{ .Values.redis.service.type }}
+  selector:
+    app: redis

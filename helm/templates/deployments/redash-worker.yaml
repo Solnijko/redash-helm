@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redash-worker
+  namespace: {{ .Values.global.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: redash-worker
+  template:
+    metadata:
+      labels:
+        app: redash-worker
+    spec:
+      containers:
+      - name: redash-scheduled-worker
+        image: "{{ .Values.redash.image.name }}:{{ .Values.redash.image.tag }}"
+        args: ["worker"]
+        envFrom:
+        - configMapRef:
+            name: redash-config
+        env:
+          - name: REDASH_LOG_LEVEL
+            value: "{{ .Values.redash.log_level.worker }}"
+          - name: WORKERS_COUNT
+            value: "1"
+          - name: QUEUES
+            value: "periodic,emails,default"
+        resources:
+          limits:
+            cpu: {{ .Values.redash.limits.cpu }}
+            memory: {{ .Values.redash.limits.mem }}
+          requests:
+            cpu: {{ .Values.redash.requests.cpu }}
+            memory: {{ .Values.redash.requests.mem }}

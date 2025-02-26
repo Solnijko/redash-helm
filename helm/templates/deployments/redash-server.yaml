@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redash-server
+  namespace: {{ .Values.global.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: redash-server
+  template:
+    metadata:
+      labels:
+        app: redash-server
+    spec:
+      {{- if .Values.redash.create_db }}
+      initContainers:
+        - name: redash-init
+          image: "{{ .Values.redash.image.name }}:{{ .Values.redash.image.tag }}"
+          args: ["create_db"]
+          envFrom:
+          - configMapRef:
+              name: redash-config
+      {{- end }}
+      containers:
+      - name: redash-server
+        image: "{{ .Values.redash.image.name }}:{{ .Values.redash.image.tag }}"
+        args: ["server"]
+        envFrom:
+        - configMapRef:
+            name: redash-config
+        env:
+          - name: REDASH_LOG_LEVEL
+            value: "{{ .Values.redash.log_level.server }}"
+          - name: REDASH_WEB_WORKERS
+            value: {{ .Values.redash.web_workers | quote }}
+        resources:
+          limits:
+            cpu: {{ .Values.redash.limits.cpu }}
+            memory: {{ .Values.redash.limits.mem }}
+          requests:
+            cpu: {{ .Values.redash.requests.cpu }}
+            memory: {{ .Values.redash.requests.mem }}
+        ports:
+        - containerPort: {{ .Values.redash.port }}

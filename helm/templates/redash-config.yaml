@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redash-config
+  namespace: {{ .Values.global.namespace }}
+data:
+  REDASH_HOST: "{{ .Values.global.url }}"
+  SERVER_NAME: "{{ .Values.global.server_name }}"
+  REDASH_COOKIE_SECRET: "{{ .Values.redash.cookie_secret }}"
+  REDASH_SECRET_KEY: "{{ .Values.redash.cookie_secret }}"
+  REDASH_REDIS_URL: "{{ tpl .Values.redis.url . }}"
+  REDASH_DATABASE_URL: "{{ tpl .Values.postgresql.url . }}"
+  REDASH_ENFORCE_CSRF: "true"
+  PYTHONUNBUFFERED: "0"
+  {{- if .Values.mail.enabled }}
+  REDASH_MAIL_SERVER: "{{ .Values.redash.mail.server }}"
+  REDASH_MAIL_PORT: "{{ .Values.redash.mail.port }}"
+  REDASH_MAIL_USERNAME: "{{ .Values.redash.mail.username }}"
+  REDASH_MAIL_PASSWORD: "{{ .Values.redash.mail.password }}"
+  REDASH_MAIL_DEFAULT_SENDER: "{{ .Values.redash.mail.default_sender }}"
+  REDASH_MAIL_USE_TLS: "{{ .Values.redash.mail.use_tls }}"
+  REDASH_MAIL_USE_SSL: "{{ .Values.redash.mail.use_ssl }}"
+  {{- end }}
+  REDASH_PASSWORD_LOGIN_ENABLED: "{{ .Values.redash.password_login_enabled }}"
+  {{- if .Values.ldap.enabled }}
+  REDASH_LDAP_LOGIN_ENABLED: "{{ .Values.redash.ldap.enabled }}"
+  REDASH_LDAP_URL: "{{ .Values.redash.ldap.url }}"
+  REDASH_LDAP_BIND_DN: "{{ .Values.redash.ldap.bind_dn }}"
+  REDASH_LDAP_BIND_DN_PASSWORD: "{{ .Values.redash.ldap.bind_dn_password }}"
+  REDASH_LDAP_DISPLAY_NAME_KEY: "{{ .Values.redash.ldap.display_name_key }}"
+  REDASH_LDAP_EMAIL_KEY: "{{ .Values.redash.ldap.email_key }}"
+  REDASH_LDAP_CUSTOM_USERNAME_PROMPT: "{{ .Values.redash.ldap.custom_username_prompt }}"
+  REDASH_LDAP_SEARCH_TEMPLATE: "{{ .Values.redash.ldap.search_template }}"
+  REDASH_LDAP_SEARCH_DN: "{{ .Values.redash.ldap.search_dn }}"
+  {{- end }}

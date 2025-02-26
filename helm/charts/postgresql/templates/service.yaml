@@ -1,0 +1,13 @@
+# PostgreSQL StatefulSet Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-db-service
+  namespace: {{ .Values.global.namespace }}
+spec:
+  selector:
+    app: postgresql-db
+  type: {{ .Values.postgresql.service.type }}
+  ports:
+    - port: {{ .Values.postgresql.service.port }}
+      targetPort: {{ .Values.postgresql.port }}

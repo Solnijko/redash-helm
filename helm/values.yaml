@@ -1,0 +1,95 @@
+global:
+  namespace: redash
+  server_name: redash.example.com
+  url: redash.example.com
+
+# Postgresql
+postgresql:
+  # Install postgresql from subchart
+  from_subchart: true
+  # Credentials
+  # If postgres is installed from subchart, use those same values
+  user: redash
+  password: CHANGEME
+  db: redash
+  # Postgresql host
+  host: "postgresql-db-service.{{ .Values.global.namespace }}.svc.cluster.local"
+  port: 5432
+  url: "postgresql://{{ .Values.postgresql.user }}:{{ .Values.postgresql.password }}@{{ tpl .Values.postgresql.host . }}:{{ .Values.postgresql.port }}/{{ .Values.postgresql.db }}"
+
+# Redis
+redis:
+  # Install redis from subchart
+  from_subchart: true
+  host: redis-service
+  port: 6379
+  url: "redis://{{ .Values.redis.host }}:{{ .Values.redis.port }}/0"
+
+# Redash configuration
+redash:
+  image:
+    name: redash/redash
+    tag: latest
+  # redash-erver container port
+  port: 5000
+  # Set to "true" on install, switch back to "false" afterwards
+  create_db: false
+  # Required. Used for various cryptographic features of the web server.
+  # https://redash.io/help/open-source/admin-guide/secrets
+  cookie_secret: CHANGEME # pwgen -1s 64
+  # If not set will use cookie_secret instead
+  # But for maximum security, a unique value for both variables is recomended.
+  secret_key: CHANGEME # pwgen -1s 64
+  # Possible  log levels described here https://docs.python.org/3/library/logging.html
+  log_level:
+    adhoc_worker: INFO
+    scheduled_worker: INFO
+    scheduler: INFO
+    server: INFO
+    worker: INFO
+  web_workers: 4
+  # Toggle to allow password login.
+  # Often disabled if Google Login, SAML, LDAP, or REMOTE_USER_LOGIN are enabled.
+  password_login_enabled: true
+  # Mail configuration
+  mail:
+    enabled: true
+    server: mail.server.com
+    port: 25
+    default_sender: sender@server.com
+    username: username
+    password: password
+    use_ssl: false
+    use_tls: false
+  # LDAP configuration
+  # https://redash.io/help/open-source/admin-guide/ldap-authentication/
+  ldap:
+    enabled: false
+    url: 127.0.0.1:389
+    bind_dn: org\\user_dn
+    bind_dn_password: CHANGEME
+    display_name_key: displayName
+    email_key: mail
+    custom_username_prompt: "LDAP/AD/SSO username: "
+    search_template: (cn=%(username)s)
+    search_dn: cn=users,dc=ORG,dc=local
+  service:
+    port: "{{ .Values.redash.port }}"
+    type: ClusterIP
+  # Pod limits and requests configuration
+  requests:
+    cpu: 500m
+    mem: 1Gi
+  limits:
+    cpu: 1
+    mem: 2Gi
+
+
+# Ingress configuration
+ingress:
+  ingressClassName: nginx
+  enabled: true
+  # TLS secret for ingress
+  tls:
+    crt: CHANGEME
+    key: CHANGEME

@@ -1,0 +1,14 @@
+postgresql:
+  image:
+    name: postgres
+    tag: latest
+  port: 5432
+  # Default database configuration
+  user: redash
+  password: changeme
+  db: redash
+  pv_access_modes: ReadWriteOnce
+  # Service configuration
+  service:
+    type: ClusterIP
+    port: 5432

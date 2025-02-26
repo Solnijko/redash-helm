@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: {{ .Values.global.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: "{{ .Values.redis.image.name }}:{{ .Values.redis.image.tag }}"
+        resources:
+          limits:
+            cpu: {{ .Values.redis.limits.cpu }}
+            memory: {{ .Values.redis.limits.mem }}
+          requests:
+            cpu: {{ .Values.redis.requests.cpu }}
+            memory: {{ .Values.redis.requests.mem }}
+        ports:
+        - containerPort: {{ .Values.redis.port }}

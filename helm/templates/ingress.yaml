@@ -1,0 +1,33 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.org/server-snippets: |
+      location / {
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
+      }
+  name: redash
+  namespace: {{ .Values.global.namespace }}
+spec:
+  ingressClassName: {{ .Values.ingress.ingressClassName | quote }}
+  rules:
+  - host: {{ .Values.global.url }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: redash-server-service
+            port:
+              number: {{ .Values.redash.port }}
+  tls:
+  - hosts:
+    -  {{ .Values.global.url }}
+    secretName: tls-secret
+{{- end }}

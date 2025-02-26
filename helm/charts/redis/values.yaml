@@ -1,0 +1,17 @@
+# Redis
+redis:
+  image:
+    name: redis
+    tag: latest
+  port: 6379
+  # Pod limits and requests
+  requests:
+    cpu: 100m
+    mem: 100Mi
+  limits:
+    cpu: 200m
+    mem: 200Mi
+  # Service configuration
+  service:
+    port: 6379
+    type: ClusterIP
