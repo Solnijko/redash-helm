@@ -23,5 +23,6 @@
 
 ## Links
 [Oficial GitHub repo](https://github.com/getredash/redash/tree/master)
+
 [Documentation](https://redash.io/help)
 
