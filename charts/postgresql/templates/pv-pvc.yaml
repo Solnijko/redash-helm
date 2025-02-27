@@ -9,7 +9,7 @@ spec:
     - {{ .Values.postgresql.pv_access_modes }}
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: /data/outline/postgresql
+    path: /data/redash/postgresql
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
