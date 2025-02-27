@@ -14,4 +14,4 @@ dependencies:
 - name: redis
   repository: file://charts/redis
   version: 0.0.1
-  condition: postgres.from_subchart
+  condition: redis.from_subchart
